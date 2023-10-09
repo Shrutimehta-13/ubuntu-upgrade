@@ -1,1 +1,22 @@
+name: Manual Trigger
 
+on:
+  workflow_run:
+    workflows: ["Python Script CI/CD"]
+    types:
+      - completed
+
+jobs:
+  manual_trigger:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger Python Script CI/CD
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const response = await github.request('POST /repos/:owner/:repo/actions/workflows/Python%20Script%20CI/CD/dispatches', {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'main'
+          })
+          console.log(response)
